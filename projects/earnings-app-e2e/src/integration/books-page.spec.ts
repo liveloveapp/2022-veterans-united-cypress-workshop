@@ -51,5 +51,13 @@ describe('Books Page', () => {
 
   it('should let you create a book', () => {
     setup();
+    const book: BookRequiredProps = {
+      name: 'My Book',
+      earnings: '100',
+      description: 'My Book Description',
+    };
+
+    BookFormComponent.fillForm(book);
+    BookFormComponent.saveForm();
   });
 });

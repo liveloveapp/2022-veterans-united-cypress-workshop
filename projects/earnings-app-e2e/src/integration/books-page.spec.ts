@@ -30,6 +30,8 @@ describe('Books Page', () => {
       cy.intercept('GET', 'http://localhost:3000/books').as('getBooks');
     }
 
+    cy.intercept('POST', 'http://localhost:3000/books').as('createBook');
+
     AuthApi.login('Admin', 'password');
 
     cy.visit('/books');
@@ -59,5 +61,12 @@ describe('Books Page', () => {
 
     BookFormComponent.fillForm(book);
     BookFormComponent.saveForm();
+    cy.wait('@createBook');
+
+    BooksApi.getBooks()
+      .its('body')
+      .should((books) => {
+        expect(books.find((b) => b.name === book.name)).to.exist;
+      });
   });
 });

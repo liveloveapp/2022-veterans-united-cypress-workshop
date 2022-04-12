@@ -20,6 +20,12 @@ describe('Books Page', () => {
     BooksApi.createBook(book);
 
     if (options.shouldFailToLoadBooks) {
+      cy.intercept('GET', 'http://localhost:3000/books', {
+        statusCode: 500,
+        body: {
+          error: 'Internal Server Error',
+        },
+      }).as('getBooks');
     } else {
       cy.intercept('GET', 'http://localhost:3000/books').as('getBooks');
     }
@@ -39,6 +45,8 @@ describe('Books Page', () => {
 
   it('should gracefully show an error message when loading the books fails', () => {
     setup({ shouldFailToLoadBooks: true });
+
+    BooksPage.getError().should('contain', 'Error');
   });
 
   it('should let you create a book', () => {

@@ -21,19 +21,12 @@ describe('Books Page', () => {
 
     if (options.shouldFailToLoadBooks) {
     } else {
+      cy.intercept('GET', 'http://localhost:3000/books').as('getBooks');
     }
 
-    cy.visit('/');
+    AuthApi.login('Admin', 'password');
 
-    cy.get('bco-login-form')
-      .find('[data-test-id="usernameInput"]')
-      .type('Admin');
-
-    cy.get('bco-login-form')
-      .find('[data-test-id="passwordInput"]')
-      .type('password');
-
-    cy.get('bco-login-form').find('[data-test-id="loginButton"]').click();
+    cy.visit('/books');
 
     return book;
   }
@@ -41,7 +34,7 @@ describe('Books Page', () => {
   it('should show a list all of the books', () => {
     const book = setup();
 
-    cy.get(`[data-test-id="book-${book.id}"]`).should('contain', book.name);
+    BookListComponent.getBook(book.id).should('contain', book.name);
   });
 
   it('should gracefully show an error message when loading the books fails', () => {
